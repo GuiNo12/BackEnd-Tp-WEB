@@ -19,6 +19,16 @@ const PostagemSchema = new Schema({
         type:[Object],
         required:false,
         default:[]
+    },
+    likes:{
+        type:[Object],
+        required:false,
+        default:[]
+    },
+    dislikes:{
+        type:[Object],
+        required:false,
+        default:[]
     }
 });
 
