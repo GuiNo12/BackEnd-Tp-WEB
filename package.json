@@ -1,0 +1,28 @@
+{
+  "name": "back-end-rede-social-enxurrada-de-bits",
+  "version": "1.0.0",
+  "description": "Projeto de uma rede social",
+  "main": "index.js",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "npx nodemon index.js",
+    "start":"node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pablohsgc/Back-End-Rede-Social-Enxurrada-de-Bits.git"
+  },
+  "author": "Pablo Henrique Santos",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pablohsgc/Back-End-Rede-Social-Enxurrada-de-Bits/issues"
+  },
+  "homepage": "https://github.com/pablohsgc/Back-End-Rede-Social-Enxurrada-de-Bits#readme"
+}
