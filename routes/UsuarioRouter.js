@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const verificaJWT = require('../middleware/verificaJWT');
+const sendMail = require('../email/envioEmail');
 
 const router = express.Router();
 
@@ -22,10 +23,11 @@ router.get("/usuarios",verificaJWT,async (req,res) => {
 
 router.post("/usuarios",async (req,res) => {
     let response;
-    let {username,password,name} = req.body;
+    let {username,email,password,name} = req.body;
     
     let novoUsuario = {
         username:username,
+        email:email,
         password:password,
         name:name
     }
@@ -40,6 +42,9 @@ router.post("/usuarios",async (req,res) => {
         }
         
     });
+    if(!response.erro){
+        await sendMail(novoUsuario.name, novoUsuario.username, novoUsuario.email);
+    }
 
     res.json(response);
 });
