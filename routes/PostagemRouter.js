@@ -76,8 +76,8 @@ router.post("/postagens/insereLike", verificaJWT, async (req, res) => {
     }
 
     await Postagem.findOne({ _id: idPost }).then(async (postagem) => {
-        if (postagem.deslikes.find(deslike => deslike.username == username)) {
-            postagem.deslikes.splice(postagem.deslikes.findIndex(deslike => deslike.username == username), 1);
+        if (postagem.dislikes.find(dislike => dislike.username === username)) {
+            postagem.dislikes.splice(postagem.dislikes.findIndex(dislike => dislike.username === username), 1);
         }
 
         if (postagem.likes.find(like => like.username == username)) {
@@ -97,11 +97,11 @@ router.post("/postagens/insereLike", verificaJWT, async (req, res) => {
     res.json(response);
 });
 
-router.post("/postagens/insereDeslike", verificaJWT, async (req, res) => {
+router.post("/postagens/insereDislike", verificaJWT, async (req, res) => {
     let response;
     let { username, idPost } = req.body;
 
-    let novoDeslike = {
+    let novoDislike = {
         username: username
     }
 
@@ -110,15 +110,15 @@ router.post("/postagens/insereDeslike", verificaJWT, async (req, res) => {
             postagem.likes.splice(postagem.likes.findIndex(like => like.username == username), 1);
         }
 
-        if (postagem.deslikes.find(deslike => deslike.username == username)) {
+        if (postagem.dislikes.find(dislike => dislike.username == username)) {
             throw new Error("Ação já Realizada!");
         }
         else {
-            postagem.deslikes.push(novoDeslike);
+            postagem.dislikes.push(novoDislike);
         }
 
         await postagem.save().then(() => {
-            response = { "mensagem": "Deslike adicionado com sucesso!" };
+            response = { "mensagem": "Dislike adicionado com sucesso!" };
         });
     }).catch((erro) => {
         response = { erro: erro.message };
