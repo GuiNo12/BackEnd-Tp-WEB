@@ -9,6 +9,7 @@ require('../models/Usuario');
 
 const Usuario = mongoose.model("usuarios");
 
+//Rota para obter todos os usuários
 router.get("/usuarios",verificaJWT,async (req,res) => {
     let response;
     
@@ -21,6 +22,7 @@ router.get("/usuarios",verificaJWT,async (req,res) => {
     res.json(response);
 });
 
+//Rota para cadastrar um novo usuário
 router.post("/usuarios",async (req,res) => {
     let response;
     let {username,email,password,name} = req.body;

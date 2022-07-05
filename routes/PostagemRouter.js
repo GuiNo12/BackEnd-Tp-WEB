@@ -19,6 +19,27 @@ router.get("/postagens", async (req, res) => {
     res.json(response);
 });
 
+//Rota para deletar uma postagem
+router.delete("/postagens/:id", verificaJWT, async (req, res) => {
+    let response;
+
+    await Postagem.findOne({_id:req.params.id}).then(async postagem => {
+        if(postagem == null){
+            throw new Error("Postagem não encontrada!");
+        }
+        if(postagem.username = req.body.username){
+            response = await postagem.deleteOne();
+        }
+    }
+    ).catch((erro) => {
+        console.log(erro);
+        response = {erro: erro.message};
+    }
+    )
+
+    res.json(response);
+});
+
 router.post("/postagens", verificaJWT, async (req, res) => {
     let response;
     let { username, mensagem } = req.body;
