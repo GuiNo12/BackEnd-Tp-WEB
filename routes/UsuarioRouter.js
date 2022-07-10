@@ -26,11 +26,13 @@ router.get("/usuarios",verificaJWT,async (req,res) => {
 router.post("/usuarios",async (req,res) => {
     let response;
     let {username,email,password,name} = req.body;
+    const fotoDefault = "https://firebasestorage.googleapis.com/v0/b/goodnews-7d198.appspot.com/o/images%2Fdefault-user.webp?alt=media&token=acb604da-dac6-4cb9-adb2-7bb90acb9075";
     
     let novoUsuario = {
         username:username,
         email:email,
         password:password,
+        fotoUsuario:fotoDefault,
         name:name
     }
 

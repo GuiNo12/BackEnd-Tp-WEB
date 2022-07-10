@@ -16,12 +16,14 @@ router.post("/login",async (req,res) => {
         if(usuario.password === password){
             let name = usuario.name;
             let username = usuario.username;
+            let foto = usuario.fotoUsuario
             let token = jwt.sign({username},process.env.SECRET,{});
 
             retorno = {
                 "auth":true,
                 "name":name,
                 "username":username,
+                "fotoUsuario":foto,
                 "token":token
             };
         }else{

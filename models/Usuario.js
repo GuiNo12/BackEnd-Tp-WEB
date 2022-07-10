@@ -13,6 +13,10 @@ const UsuarioSchema = new Schema({
     name:{
         type:String,
         required:true
+    },
+    fotoUsuario:{
+        type:String,
+        required:true
     }
 });
 
