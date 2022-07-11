@@ -1,41 +1,39 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const verificaJWT = require('../middleware/verificaJWT');
+const adicionaFotoUsuario = require('../models/AdicionaFotoUsuario');
 const router = express.Router();
 
 require('../models/Postagem');
-require('../models/Usuario');
 
 const Postagem = mongoose.model("postagens");
-const Usuario = mongoose.model("usuarios");
 
 router.get("/postagens", async (req, res) => {
-    let response;
-    let usuarios = await Usuario.find();
-    let dicionarioFotoUsuarios = {};
-    
-    //Cria um dicionario contendo o nome de usuário e a foto desse usuário.
-    for(let usuario of usuarios)
-        dicionarioFotoUsuarios[usuario.username] = usuario.fotoUsuario;
-    
-    await Postagem.find({}).then((postagens) => {
-        for(let i = 0; i < postagens.length; i++){
-            postagens[i] = postagens[i].toObject();
-            //Adiciona na postagem a foto do usuário
-            postagens[i].fotoUsuario = dicionarioFotoUsuarios[postagens[i].username];
+    let postagens = await Postagem.find({});
 
-            //Adiciona em todos os comentarios a foto do respectivo usuário.
-            for(let j = 0; j < postagens[i].comentarios.length; j++){
-                postagens[i].comentarios[j].fotoUsuario = dicionarioFotoUsuarios[postagens[i].comentarios[j].username];
-            }  
-        }
-    
-        response = postagens;
-    }).catch((erro) => {
-        response = erro;
-    })
+    postagens = await adicionaFotoUsuario(postagens);
 
-    res.json(response);
+    res.json(postagens);
+});
+
+router.get("/postagens/minhasPostagens",verificaJWT, async (req, res) => {
+    let {username} = req.body;
+
+    let postagens = await Postagem.find({"username":username});
+
+    postagens = await adicionaFotoUsuario(postagens);
+
+    res.json(postagens);
+});
+
+router.get("/postagens/meusComentarios",verificaJWT, async (req, res) => {
+    let {username} = req.body;
+
+    let postagens = await Postagem.find({"comentarios.username":username});
+
+    postagens = await adicionaFotoUsuario(postagens);
+
+    res.json(postagens);
 });
 
 //Rota para deletar uma postagem
@@ -49,12 +47,10 @@ router.delete("/postagens/:id", verificaJWT, async (req, res) => {
         if(postagem.username = req.body.username){
             response = await postagem.deleteOne();
         }
-    }
-    ).catch((erro) => {
-        console.log(erro);
+    }).catch((erro) => {
+        
         response = {erro: erro.message};
-    }
-    )
+    })
 
     res.json(response);
 });
@@ -67,7 +63,6 @@ router.post("/postagens", verificaJWT, async (req, res) => {
         username: username,
         mensagem: mensagem
     }
-
 
     await new Postagem(novaPostagem).save().then(() => {
         response = "Postagem adicionada com sucesso!";
