@@ -22,6 +22,28 @@ router.get("/usuarios",verificaJWT,async (req,res) => {
     res.json(response);
 });
 
+router.put("/usuarios", verificaJWT, async (req,res) => {
+    const {username,nome,bio,fotoUsuario} = req.body;
+    let response;
+
+    await Usuario.findOne({"username":username})
+    .then(async usuario => {
+        usuario.name = nome;
+        usuario.fotoUsuario = fotoUsuario;
+
+        await usuario.save().then((dado) => {
+            response = {mensagem:"Usuário alterado com sucesso"};
+        }).catch(erro => {
+            response = {erro:erro.message}
+        })
+    })
+    .catch(erro => {
+        response = {erro:erro.message};
+    });
+
+    res.send(response);
+});
+
 //Rota para cadastrar um novo usuário
 router.post("/usuarios",async (req,res) => {
     let response;

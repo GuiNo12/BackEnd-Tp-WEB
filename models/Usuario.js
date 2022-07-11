@@ -14,6 +14,10 @@ const UsuarioSchema = new Schema({
         type:String,
         required:true
     },
+    email:{
+        type:String,
+        required:true
+    },
     fotoUsuario:{
         type:String,
         required:true
