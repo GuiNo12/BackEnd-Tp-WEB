@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const verificaJWT = require('../middleware/verificaJWT');
-const adicionaFotoUsuario = require('../models/AdicionaFotoUsuario');
+const adicionaFotoUsuario = require('../models/adicionaFotoUsuario');
 const router = express.Router();
 
 require('../models/Postagem');
