@@ -16,20 +16,20 @@ router.get("/postagens", async (req, res) => {
     res.json(postagens);
 });
 
-router.get("/postagens/minhasPostagens",verificaJWT, async (req, res) => {
-    let {username} = req.body;
+router.get("/postagens/minhasPostagens", verificaJWT, async (req, res) => {
+    let { username } = req.body;
 
-    let postagens = await Postagem.find({"username":username});
+    let postagens = await Postagem.find({ "username": username });
 
     postagens = await adicionaFotoUsuario(postagens);
 
     res.json(postagens);
 });
 
-router.get("/postagens/meusComentarios",verificaJWT, async (req, res) => {
-    let {username} = req.body;
+router.get("/postagens/meusComentarios", verificaJWT, async (req, res) => {
+    let { username } = req.body;
 
-    let postagens = await Postagem.find({"comentarios.username":username});
+    let postagens = await Postagem.find({ "comentarios.username": username });
 
     postagens = await adicionaFotoUsuario(postagens);
 
@@ -40,16 +40,16 @@ router.get("/postagens/meusComentarios",verificaJWT, async (req, res) => {
 router.delete("/postagens/:id", verificaJWT, async (req, res) => {
     let response;
 
-    await Postagem.findOne({_id:req.params.id}).then(async postagem => {
-        if(postagem == null){
+    await Postagem.findOne({ _id: req.params.id }).then(async postagem => {
+        if (postagem == null) {
             throw new Error("Postagem não encontrada!");
         }
-        if(postagem.username = req.body.username){
+        if (postagem.username = req.body.username) {
             response = await postagem.deleteOne();
         }
     }).catch((erro) => {
-        
-        response = {erro: erro.message};
+
+        response = { erro: erro.message };
     })
 
     res.json(response);
@@ -103,7 +103,7 @@ router.post("/postagens/insereComentario", verificaJWT, async (req, res) => {
 });
 
 router.post("/postagens/insereLike", verificaJWT, async (req, res) => {
-    let response;
+    let response, mensagem;
     let { username, idPost } = req.body;
 
     let novoLike = {
@@ -111,19 +111,23 @@ router.post("/postagens/insereLike", verificaJWT, async (req, res) => {
     }
 
     await Postagem.findOne({ _id: idPost }).then(async (postagem) => {
+
         if (postagem.dislikes.find(dislike => dislike.username === username)) {
             postagem.dislikes.splice(postagem.dislikes.findIndex(dislike => dislike.username === username), 1);
         }
 
-        if (postagem.likes.find(like => like.username == username)) {
-            throw new Error("Ação já Realizada!");
-        }
-        else {
+        let like = postagem.likes.find(like => like.username == username);
+
+        if (like) {
+            postagem.likes.splice(like, 1);
+            mensagem = "Like removido com sucesso!";
+        } else {
             postagem.likes.push(novoLike);
+            mensagem = "Like adicionado com sucesso!";
         }
 
         await postagem.save().then(() => {
-            response = { "mensagem": "Like adicionado com sucesso!" };
+            response = { "mensagem": mensagem };
         });
     }).catch((erro) => {
         response = { erro: erro.message };
@@ -145,15 +149,19 @@ router.post("/postagens/insereDislike", verificaJWT, async (req, res) => {
             postagem.likes.splice(postagem.likes.findIndex(like => like.username == username), 1);
         }
 
-        if (postagem.dislikes.find(dislike => dislike.username == username)) {
-            throw new Error("Ação já Realizada!");
+        let dislike = postagem.dislikes.find(dislike => dislike.username == username);
+
+        if (dislike) {
+            postagem.dislikes.splice(dislike, 1);
+            mensagem = "Dislike removido com sucesso!";
         }
         else {
             postagem.dislikes.push(novoDislike);
+            mensagem = "Dislike adicionado com sucesso!";
         }
 
         await postagem.save().then(() => {
-            response = { "mensagem": "Dislike adicionado com sucesso!" };
+            response = { "mensagem": mensagem };
         });
     }).catch((erro) => {
         response = { erro: erro.message };
